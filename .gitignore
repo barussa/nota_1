@@ -1,0 +1,81 @@
+# See https://help.github.com/ignore-files/ for more about ignoring files.
+
+/backup/unversioned_big_files
+
+# dependencies
+/node_modules
+
+# testing
+/coverage
+
+# production
+/build
+/functions-build
+
+# netlify
+.netlify
+
+# misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Folders to ignore
+elm-stuff
+node_modules
+frontend/dist
+.elm-spa
+
+# MacOS weird stuff
+.DS_Store
+
+.cache
+dist
+.DS_Store
+elm-stuff
+node_modules
+npm-debug.log*
+.netlify
+repl-temp-*
+cypress/screenshots/*
+cypress/videos/*
+
+
+/tools/NuGet.exe
+/App_Data
+/secrets
+/data
+.secrets
+appsettings.json
+local.settings.json
+
+node_modules
+dist
+
+# Local python packages
+.python_packages/
+
+# Python Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Azurite artifacts
+__blobstorage__
+__queuestorage__
+__azurite_db*__.json
