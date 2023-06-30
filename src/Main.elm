@@ -1,13 +1,9 @@
 module Main exposing (main)
 
-import Html exposing (Html, button, div, text, ul, li, p, Attribute)
-import Html.Events exposing ( onInput, keyCode, on)
-import Browser
-import Html exposing (input)
-import Json.Decode as Json
-import Browser.Events exposing (onKeyDown)
-import Html.Events exposing (onClick)
+import Html exposing (Html, button, div, text, ul, li, p, input)
+import Html.Events exposing (onInput, onClick)
 import Html.Attributes exposing (placeholder)
+import Browser
 
 main : Program () Model Msg
 main = Browser.sandbox { init = initialModel, update = update, view = view }
