@@ -6,6 +6,8 @@ import Browser
 import Html exposing (input)
 import Json.Decode as Json
 import Browser.Events exposing (onKeyDown)
+import Html.Events exposing (onClick)
+import Html.Attributes exposing (placeholder)
 
 main : Program () Model Msg
 main = Browser.sandbox { init = initialModel, update = update, view = view }
@@ -14,7 +16,7 @@ main = Browser.sandbox { init = initialModel, update = update, view = view }
 type alias Model =
     { taskToDo : String
     , tasks : List Task
-    , addTask : String
+    , addTask : Task
     }
 
 
@@ -28,13 +30,13 @@ type alias Task =
 initialModel : Model
 initialModel =
     { taskToDo = "TO DO"
-    , addTask = ""
-    , tasks =
-        [ { title = "First APP"
-          , content = "Get it done"
-          , owner = "EU"
+    , addTask = { title = ""
+          , content = ""
+          , owner = ""
           }
-        , { title = "finish APP"
+    , tasks =
+        [ 
+          { title = "finish APP"
           , content = "Get it done"
           , owner = "EU"
           }
@@ -43,34 +45,40 @@ initialModel =
 
 
 type Msg
-    = UpdateTasks Int
+    = UpdateTasks
     | NoOp
-    | Input String
+    | InputTitle String
+    | InputContent String
+    | InputOwner String
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        UpdateTasks key ->
-            if key == 13 then 
-                { model | tasks = { title = model.addTask, content = model.addTask, owner = model.addTask } :: model.tasks }
-            else 
-                model
-                
+        UpdateTasks ->
+            { model | tasks = model.addTask :: model.tasks}
+
         NoOp ->
             model
-        Input text ->
-            {model|addTask = text} 
-        
-onKeyDown: (Int -> msg) -> Attribute msg
-onKeyDown tagger = on "keydown" (Json.map tagger keyCode)
+        InputTitle text ->
+            { model | addTask = { title = text, content = model.addTask.content, owner = model.addTask.owner } }
+
+        InputContent text ->
+            { model | addTask = {content = text, title = model.addTask.title, owner = model.addTask.owner } }
+ 
+        InputOwner text ->
+            { model | addTask = {owner = text, title = model.addTask.title, content = model.addTask.content } }
+ 
 
 view : Model -> Html Msg
 view model =
     div []
         [ text model.taskToDo
         , ul [] (List.map viewRenderTask model.tasks)
-        , input [onKeyDown UpdateTasks, onInput Input] []
+        , input [onInput InputTitle, placeholder "Title"] []
+        , input [onInput InputContent, placeholder "Content"] []
+        , input [onInput InputOwner, placeholder "Who did?"] []
+        , button [onClick UpdateTasks] [text "SAVE"]
         ]
     
     
