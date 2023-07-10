@@ -1,85 +1,89 @@
-module Main exposing (..)module Main exposing (..)
+module Main exposing (main)
 
-import Html exposing (..)
-import Html.Events exposing (onClick)
-import Html.Attributes exposing (class, hidden)
+import Html exposing (Html, button, div, text, ul, li, p, input)
+import Html.Events exposing (onInput, onClick)
+import Html.Attributes exposing (placeholder)
+import Browser
 
-
-main : Program Never Model Msg
-main =
-    Html.beginnerProgram
-        { model = initialModel
-        , view = view
-        , update = update
-        }
+main : Program () Model Msg
+main = Browser.sandbox { init = initialModel, update = update, view = view }
 
 
 type alias Model =
-    { blogTitle : String
-    , articles : List Article
+    { taskToDo : String
+    , tasks : List Task
+    , addTask : Task
     }
 
 
-type alias Article =
+type alias Task =
     { title : String
     , content : String
-    , showContent : Bool
+    , owner : String
     }
 
 
 initialModel : Model
 initialModel =
-    { blogTitle = "Some posts on Elm"
-    , articles =
-        [ { title = "Learning Elm"
-          , content = "I just started to learn functional frontend development with Elm. How cool is that?"
-          , showContent = False
+    { taskToDo = "TO DO"
+    , addTask = { title = ""
+          , content = ""
+          , owner = ""
           }
-        , { title = "The Elm Architecture"
-          , content = "In this post I am trying to explain The Elm Architecture …"
-          , showContent = False
+    , tasks =
+        [ 
+          { title = "finish APP"
+          , content = "Get it done"
+          , owner = "EU"
           }
         ]
     }
 
+
 type Msg
-    = ToggleContent Article
+    = UpdateTasks
+    | NoOp
+    | InputTitle String
+    | InputContent String
+    | InputOwner String
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        ToggleContent article ->
-            let
-                updateArticle a =
-                    if a == article then
-                        { a | showContent = (not article.showContent) }
-                    else
-                        a
+        UpdateTasks ->
+            { model | tasks = model.addTask :: model.tasks}
 
-                updatedArticles =
-                    List.map updateArticle model.articles
-            in
-                { model | articles = updatedArticles } 
+        NoOp ->
+            model
+        InputTitle text ->
+            { model | addTask = { title = text, content = model.addTask.content, owner = model.addTask.owner } }
+
+        InputContent text ->
+            { model | addTask = {content = text, title = model.addTask.title, owner = model.addTask.owner } }
+ 
+        InputOwner text ->
+            { model | addTask = {owner = text, title = model.addTask.title, content = model.addTask.content } }
+ 
 
 view : Model -> Html Msg
 view model =
-    div
-        [ class "blog" ]
-        [ h1 [] [ text model.blogTitle ]
-        , p [] [ text "Click the titles to read the full article." ]
-        , section
-            [ class "articles" ]
-            (List.map viewArticle model.articles)
+    div []
+        [ text model.taskToDo
+        , ul [] (List.map viewRenderTask model.tasks)
+        , input [onInput InputTitle, placeholder "Title"] []
+        , input [onInput InputContent, placeholder "Content"] []
+        , input [onInput InputOwner, placeholder "Who did?"] []
+        , button [onClick UpdateTasks] [text "SAVE"]
         ]
+    
+    
 
 
-viewArticle : Article -> Html Msg
-viewArticle a =
-    article
-        [ onClick (ToggleContent a) ]
-        [ h2 [] [ text a.title ]
-        , div
-            [ hidden (not a.showContent) ]
-            [ text a.content ]
+viewRenderTask : Task -> Html msg
+viewRenderTask task =
+    li []
+        [ p [] [ text task.title ]
+        , p [] [ text task.content ]
+        , p [] [ text task.owner ]
         ]
