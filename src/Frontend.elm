@@ -9,12 +9,12 @@ import Html.Attributes exposing (placeholder)
 app =
     Lamdera.frontend
         { init = \_ _ -> init
-        , onUrlRequest = FNoop
-        , onUrlChange = FNoop
         , update = update
         , updateFromBackend = updateFromBackend
-        , subscriptions = Sub.none
-        , view = view
+        , view = \frontendModel -> {title = "v1", body = [view frontendModel]}
+        , subscriptions = \_ -> Sub.none
+        , onUrlChange =  \_ -> FNoop
+        , onUrlRequest = \_ -> FNoop
         }
 
 
@@ -24,26 +24,27 @@ and needs to provide to lamdera
 receive something from different form
 
 -}
-init: (FrontendModel)
+init: (FrontendModel, Cmd FrontendMsg)
 init = ({tasks = []
         ,addTaskForm = {title = "", content = "", owner = ""}
         ,clientId = ""}, Cmd.none)
 
-update : FrontendMsg -> FrontendModel -> FrontendModel 
+update : FrontendMsg -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg )
 update msg model =
     case msg of
         SaveButtonClicked ->
-            { model | tasks = model.addTaskForm :: model.tasks}
+            ({ model | tasks = model.addTaskForm :: model.tasks}, Lamdera.sendToBackend (StoreNewTask model.addTaskForm))
 
         InputTitle text ->
-            { model | addTaskForm = { title = text, content = model.addTaskForm.content, owner = model.addTaskForm.owner } }
+           ({ model | addTaskForm = { title = text, content = model.addTaskForm.content, owner = model.addTaskForm.owner}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
 
         InputContent text ->
-            { model | addTaskForm = {content = text, title = model.addTaskForm.title, owner = model.addTaskForm.owner } }
+           ({ model | addTaskForm = { title = model.addTaskForm.title, content = text, owner = model.addTaskForm.owner}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
  
         InputOwner text ->
-            { model | addTaskForm = {owner = text, title = model.addTaskForm.title, content = model.addTaskForm.content } }
- 
+           ({ model | addTaskForm = { title = model.addTaskForm.title, content = model.addTaskForm.content, owner = text}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
+    
+        FNoop -> (model,Cmd.none)
 
 updateFromBackend : ToFrontend -> FrontendModel -> ( FrontendModel, Cmd FrontendMsg )
 updateFromBackend msg model =
