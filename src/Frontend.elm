@@ -11,7 +11,7 @@ app =
         { init = \_ _ -> init
         , update = update
         , updateFromBackend = updateFromBackend
-        , view = \frontendModel -> {title = "v1", body = [view frontendModel]}
+        , view = \frontendModel -> {title = "TODO", body = [view frontendModel]}
         , subscriptions = \_ -> Sub.none
         , onUrlChange =  \_ -> FNoop
         , onUrlRequest = \_ -> FNoop
@@ -36,13 +36,13 @@ update msg model =
             ({ model | tasks = model.addTaskForm :: model.tasks}, Lamdera.sendToBackend (StoreNewTask model.addTaskForm))
 
         InputTitle text ->
-           ({ model | addTaskForm = { title = text, content = model.addTaskForm.content, owner = model.addTaskForm.owner}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
+           ({ model | addTaskForm = { title = text, content = model.addTaskForm.content, owner = model.addTaskForm.owner}}, (Cmd.none))
 
         InputContent text ->
-           ({ model | addTaskForm = { title = model.addTaskForm.title, content = text, owner = model.addTaskForm.owner}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
+           ({ model | addTaskForm = { title = model.addTaskForm.title, content = text, owner = model.addTaskForm.owner}}, (Cmd.none))
  
         InputOwner text ->
-           ({ model | addTaskForm = { title = model.addTaskForm.title, content = model.addTaskForm.content, owner = text}}, Lamdera.sendToBackend(StoreNewTask (model.addTaskForm)))
+           ({ model | addTaskForm = { title = model.addTaskForm.title, content = model.addTaskForm.content, owner = text}}, (Cmd.none))
     
         FNoop -> (model,Cmd.none)
 

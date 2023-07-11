@@ -3,7 +3,6 @@ module Backend exposing (app, init)
 import Lamdera exposing (ClientId, SessionId, broadcast, sendToFrontend)
 import Types exposing (..)
 
-
 app =
     Lamdera.backend
         { init = init
@@ -20,7 +19,7 @@ update : BackendMsg -> BackendModel -> ( BackendModel, Cmd BackendMsg )
 update msg model =
     case msg of
         ClientConnected _ clientId ->
-            ( model, Cmd.none )
+            ( model, sendToFrontend clientId <| ReplaceTaskList model.tasks )
 
         Noop ->
             ( model, Cmd.none )
@@ -34,7 +33,7 @@ updateFromFrontend _ clientId msg model =
                 taskToAdd =
                     task :: model.tasks
             in
-            ( { model | tasks = taskToAdd }, Cmd.none )
+            ( { model | tasks = taskToAdd }, broadcast(ReplaceTaskList taskToAdd) )
 
 
 
