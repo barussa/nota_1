@@ -36,7 +36,6 @@ updateFromFrontend _ clientId msg model =
             ( { model | tasks = taskToAdd }, broadcast(ReplaceTaskList taskToAdd) )
 
 
-
 -- ({ model | tasks = taskToAdd}, broadcast(taskToAdd clientId ))
 
 

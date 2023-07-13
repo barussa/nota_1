@@ -18,6 +18,7 @@ type alias Task =
     { title : String
     , content : String
     , owner : String
+    , phase : String
     }
 
 
@@ -25,7 +26,7 @@ type alias Task =
 events the frontend needs to handle
 -}
 type FrontendMsg
-    = SaveButtonClicked
+    = SaveButtonClicked String
     | InputTitle String
     | InputContent String
     | InputOwner String
